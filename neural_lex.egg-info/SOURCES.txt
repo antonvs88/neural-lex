@@ -1,0 +1,16 @@
+README.md
+pyproject.toml
+neural_lex/__init__.py
+neural_lex/cli.py
+neural_lex/extractor.py
+neural_lex/finlex.py
+neural_lex/models.py
+neural_lex/recursive.py
+neural_lex/symbolic.py
+neural_lex.egg-info/PKG-INFO
+neural_lex.egg-info/SOURCES.txt
+neural_lex.egg-info/dependency_links.txt
+neural_lex.egg-info/entry_points.txt
+neural_lex.egg-info/requires.txt
+neural_lex.egg-info/top_level.txt
+tests/test_symbolic.py

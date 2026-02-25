@@ -1,0 +1,42 @@
+[
+  {
+    "rule_id": "TLL_18",
+    "subject": "driver",
+    "action": "yield",
+    "modality": "must",
+    "conditions": [
+      "approaching_intersection",
+      "coming_from_right",
+      "!has_yield_sign"
+    ],
+    "references": [],
+    "source_section": "18",
+    "source_text": "Risteystä lähestyttäessä on väistettävä oikealta tulevaa ajoneuvoa, jos liikennemerkkiä ei ole."
+  },
+  {
+    "rule_id": "TLL_24",
+    "subject": "driver",
+    "action": "yield",
+    "modality": "must",
+    "conditions": [
+      "approaching_intersection",
+      "has_yield_sign"
+    ],
+    "references": [],
+    "source_section": "24",
+    "source_text": "Väistämismerkki velvoittaa väistämään suunnasta riippumatta."
+  },
+  {
+    "rule_id": "TLL_24_CONFLICT",
+    "subject": "driver",
+    "action": "proceed",
+    "modality": "must",
+    "conditions": [
+      "approaching_intersection",
+      "has_yield_sign"
+    ],
+    "references": [],
+    "source_section": "24",
+    "source_text": "Kuvitteellinen ristiriitainen sääntö: väistämismerkistä huolimatta on ajettava."
+  }
+]

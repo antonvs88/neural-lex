@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neural-lex"
+version = "0.1.0"
+description = "Neuro-symbolic legal rule extraction and consistency checks"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "beautifulsoup4>=4.12",
+  "requests>=2.32",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+solver = ["z3-solver>=4.12.2,<4.15"]
+
+[project.scripts]
+neural-lex = "neural_lex.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["neural_lex*"]

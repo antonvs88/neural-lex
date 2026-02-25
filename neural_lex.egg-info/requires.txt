@@ -1,0 +1,8 @@
+beautifulsoup4>=4.12
+requests>=2.32
+
+[dev]
+pytest>=8.0
+
+[solver]
+z3-solver<4.15,>=4.12.2
