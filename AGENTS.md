@@ -6,17 +6,17 @@ This project implements an experimental extraction layer inspired by the **Recur
 Legal statutes are inherently hierarchical and cross-referenced. A single section (e.g., §18) might be modified or overridden by another (§24). Standard LLM context windows often lose track of these relationships when processing large documents linearly.
 
 ## Our Solution: Context-as-State
-Wait instead of feeding the entire law into an LLM, `neural-lex` treats the law as a navigable environment.
+Instead of feeding the entire law into an LLM, `neural-lex` treats the law as a navigable environment.
 
 ### 1. Hierarchical Decomposition
 The `RecursiveLLMExtractor` breaks the law into its natural parts: Chapters and Sections. This keeps the "Effective Context Window" small and focused for each individual LLM call.
 
 ### 2. Recursive Primitive
-When the LLM identifies a section reference (e.g., "subject to §24"), the extractor does not simply store the string. It executes a **recursive query**:
+When the extractor identifies a section reference (e.g., §18 referencing §24 for priority rules), it executes a **recursive query**:
 1.  Pause processing of §18.
-2.  Locate and process §24.
+2.  Locate and process the referenced §24.
 3.  Retrieve the logic atoms extracted from §24.
-4.  Inject those atoms back into the context for final resolution of §18.
+4.  Inject those atoms back into the context for final resolution of §18 obligations.
 
 ### 3. Caching & State
 To avoid $O(N^2)$ LLM costs, we maintain a cache of processed sections. This matches the "Context-as-State" principle where the system state evolves as it "reads" the law.
