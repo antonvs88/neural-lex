@@ -1,5 +1,7 @@
 # neural-lex
 
+![neural-lex logo](assets/logo.png)
+
 `neural-lex` is a neuro-symbolic prototype for extracting legal rules from text and checking logical consistency with a SAT/SMT-style backend.
 
 It is specifically tuned for Finnish traffic law (**Tieliikennelaki 729/2018**) using hierarchical decomposition and recursive querying inspired by [Recursive Language Models](https://medium.com/@pietrobolcato/recursive-language-models-infinite-context-that-works-174da45412ab).
