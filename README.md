@@ -23,8 +23,8 @@ The current implementation is tuned for modular traffic-law text (for example **
 
 ## Current Status
 
-- Baseline implementation is working end-to-end.
-- Extraction is heuristic/rule-based (regex patterns), not an LLM pipeline yet.
+- Extraction defaults to heuristic/rule-based (regex patterns).
+- **NEW**: Recursive LLM extraction layer based on the "Recursive Language Model" concept.
 - Z3 is optional; a lightweight fallback evaluator is used when `z3-solver` is unavailable.
 
 ## Repository Layout
@@ -34,7 +34,8 @@ neural_lex/
   cli.py         # CLI entry point
   models.py      # LogicAtom, Section, Conflict models
   finlex.py      # Finlex fetch + HTML/text + section splitting
-  extractor.py   # Rule extraction heuristics
+  extractor.py   # Heuristic rule extraction (regex)
+  llm_extractor.py # Recursive LLM extraction (v0.1)
   recursive.py   # Recursive section-reference resolver
   symbolic.py    # Constraint compilation + conflict/scenario checks
 examples/
@@ -58,6 +59,13 @@ Optional Z3 backend:
 
 ```bash
 pip install -e ".[solver]"
+```
+
+Recursive LLM requirements:
+
+```bash
+pip install -e ".[llm]"
+export OPENAI_API_KEY="your-key"
 ```
 
 If `z3-solver` fails to compile on your machine, the project still runs with the fallback symbolic backend.
@@ -90,13 +98,18 @@ python -m neural_lex.cli \
   --scenario approaching_intersection=true coming_from_right=true has_yield_sign=true
 ```
 
-### 4. Pull source from Finlex directly
+### 4. Extract using Recursive LLM (Experimental)
+
+Utilizes the hierarchical decomposition and recursive querying inspired by [Recursive Language Models](https://medium.com/@pietrobolcato/recursive-language-models-infinite-context-that-works-174da45412ab).
 
 ```bash
 python -m neural_lex.cli \
-  --finlex-url "https://www.finlex.fi/fi/laki/alkup/2018/20180729" \
-  --chapter 2
+  --text-file examples/tll_ch2_excerpt.txt \
+  --use-llm \
+  --show-atoms
 ```
+
+### 5. Pull source from Finlex directly
 
 ## CLI Reference
 
@@ -235,7 +248,7 @@ If you see `Failed building wheel for z3-solver` and a long C++ build traceback:
 
 Recommended next improvements:
 
-1. Add an LLM extractor with JSON schema validation and retry loops.
+1. Expand the `LLMExtractor` with structured output validation.
 2. Add legal precedence modeling:
    - signs/control devices over defaults
    - `lex specialis` style overrides

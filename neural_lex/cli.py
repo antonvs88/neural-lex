@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from .extractor import extract_logic_atoms_from_text
+from .llm_extractor import RecursiveLLMExtractor, OpenAIProvider, GeminiProvider
 from .finlex import fetch_finlex_html, finlex_html_to_text
 from .models import LogicAtom
 from .recursive import resolve_rule_references
@@ -44,14 +45,32 @@ def _load_atoms_from_source(args: argparse.Namespace) -> list[LogicAtom]:
         return _load_atoms_from_json(Path(args.atoms_json))
 
     if args.text_file:
-        text = Path(args.text_file).read_text(encoding="utf-8")
-        chapter = str(args.chapter) if args.chapter is not None else None
-        return extract_logic_atoms_from_text(text, chapter_filter=chapter)
+        source_text = Path(args.text_file).read_text(encoding="utf-8")
+    else:
+        html = fetch_finlex_html(args.finlex_url)
+        source_text = finlex_html_to_text(html)
 
-    html = fetch_finlex_html(args.finlex_url)
-    text = finlex_html_to_text(html)
     chapter = str(args.chapter) if args.chapter is not None else None
-    return extract_logic_atoms_from_text(text, chapter_filter=chapter)
+
+    if args.use_llm:
+        if args.gemini:
+            if args.google_key:
+                import os
+                os.environ["GOOGLE_API_KEY"] = args.google_key
+            provider = GeminiProvider()
+        else:
+            if args.openai_key:
+                import os
+                os.environ["OPENAI_API_KEY"] = args.openai_key
+            provider = OpenAIProvider()
+            
+        extractor = RecursiveLLMExtractor(provider)
+        atoms = extractor.extract_from_text(source_text)
+        if chapter:
+            atoms = [a for a in atoms if a.source_section and a.source_section.startswith(chapter)]
+        return atoms
+
+    return extract_logic_atoms_from_text(source_text, chapter_filter=chapter)
 
 
 def main() -> None:
@@ -74,6 +93,10 @@ def main() -> None:
         nargs="*",
         help="Scenario assumptions, e.g. approaching_intersection=true has_yield_sign=false",
     )
+    parser.add_argument("--use-llm", action="store_true", help="Use recursive LLM extractor")
+    parser.add_argument("--openai-key", help="OpenAI API key")
+    parser.add_argument("--gemini", action="store_true", help="Use Gemini instead of OpenAI")
+    parser.add_argument("--google-key", help="Google API key")
     args = parser.parse_args()
 
     atoms = _load_atoms_from_source(args)

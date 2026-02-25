@@ -16,6 +16,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
 solver = ["z3-solver>=4.12.2,<4.15"]
+llm = ["openai>=1.0.0"]
 
 [project.scripts]
 neural-lex = "neural_lex.cli:main"
